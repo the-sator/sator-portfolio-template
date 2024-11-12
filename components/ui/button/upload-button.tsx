@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  MouseEventHandler,
-  SetStateAction,
-  useRef,
-} from "react";
-import { FaCamera } from "react-icons/fa";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 import { Button } from "../button";
 
 import { Input } from "@/components/ui/input";

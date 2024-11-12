@@ -60,7 +60,7 @@ export function Combobox({
           aria-expanded={open}
           className={cn(
             `${sizeClasses[size]} w-full justify-between rounded-sm font-normal`,
-            className
+            className,
           )}
         >
           <p className="w-2/3">
@@ -82,7 +82,9 @@ export function Combobox({
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    onChange && onChange(currentValue);
+                    if (onChange) {
+                      onChange(currentValue);
+                    }
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
@@ -90,7 +92,7 @@ export function Combobox({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {option.label}

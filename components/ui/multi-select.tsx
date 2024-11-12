@@ -39,7 +39,6 @@ const multiSelectVariants = cva(
           "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
       },
     },
     defaultVariants: {
@@ -127,6 +126,7 @@ export const MultiSelect = React.forwardRef<
       animation = 0,
       maxCount = 3,
       modalPopover = false,
+      variant = "default",
       asChild = false,
       className,
       ...props
@@ -196,13 +196,14 @@ export const MultiSelect = React.forwardRef<
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild={asChild}>
           <Button
             ref={ref}
             {...props}
             onClick={handleTogglePopover}
             className={cn(
               "flex h-auto min-h-10 w-full items-center justify-between rounded-md bg-inherit p-1 hover:bg-neutral-700/50",
+              multiSelectVariants({ variant }),
               className,
             )}
           >

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { NextIntlClientProvider } from "next-intl";
 import "@/public/style/globals.css";
 import "@/public/style/tiptap.scss";
@@ -13,7 +12,6 @@ import ThemeProviders from "@/context/theme-provider";
 
 import { Inter as _font } from "next/font/google";
 import { cn } from "@/lib/utils";
-import ThemeSwitch from "@/components/ui/theme-switch";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/ui/nav";
 import { notFound } from "next/navigation";

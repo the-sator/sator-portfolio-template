@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { Editor } from "@tiptap/react";
-import { FaLink } from "react-icons/fa";
 import { InputWithLabel } from "../input-label";
 import { Button } from "../button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../dialog";
@@ -15,7 +14,7 @@ type Props = {
 export default function LinkModal({ editor, setOpen, open }: Props) {
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
-  const [shouldShowMenu, setShouldShowMenu] = useState(false);
+  const [, setShouldShowMenu] = useState(false);
 
   const addLink = () => {
     if (url === "") {

@@ -1,10 +1,10 @@
-import { Plugin, PluginKey } from "prosemirror-state";
+import { Plugin } from "prosemirror-state";
 import { compressImage } from "../../lib/image";
 import { toast } from "@/hooks/use-toast";
 
 export type UploadFn = (image: File) => Promise<
   | {
-      error: any;
+      error: never;
       publicUrl?: undefined;
     }
   | {
@@ -32,7 +32,7 @@ export const blobToBase64 = (blob: Blob): Promise<string> => {
 export const dropImagePlugin = (compressedSize: number, upload?: UploadFn) => {
   return new Plugin({
     props: {
-      handlePaste(view, event, slice) {
+      handlePaste(view, event) {
         const items = Array.from(event.clipboardData?.items || []);
         let imageHandled = false;
         if (!compressedSize) {

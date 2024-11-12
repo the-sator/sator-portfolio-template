@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import ThemeSwitch from "./theme-switch";
 import LanguageDropdown from "./dropdown/language-dropdown";
-import Link from "next/link";
 type Props = {
   sidebarTrigger: ReactNode;
   currentLocale: string;

@@ -1,5 +1,5 @@
 "use client";
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import { Button, ButtonProps } from "../button";
 import { IoCopy } from "react-icons/io5";
 import { cn } from "@/lib/utils";

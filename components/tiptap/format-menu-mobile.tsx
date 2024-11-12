@@ -12,7 +12,6 @@ import {
   FaCode,
   FaItalic,
   FaLink,
-  FaList,
   FaListOl,
   FaUpload,
 } from "react-icons/fa";
@@ -24,7 +23,6 @@ import { cn } from "@/lib/utils";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Button } from "../ui/button";
 import UploadButton from "../ui/button/upload-button";
-import { useToast } from "@/hooks/use-toast";
 type Props = {
   editor: Editor | null;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -44,7 +42,7 @@ type FormatOption = {
   value: string;
   icon: React.ComponentType<{ size: number }>;
   command: CommandKeys;
-  args?: Record<string, any>;
+  args?: Record<string, unknown>;
 };
 
 const formatOptions: FormatOption[] = [
@@ -73,11 +71,11 @@ const formatOptions: FormatOption[] = [
   { value: "orderedList", icon: FaListOl, command: "toggleOrderedList" },
 ];
 export default function FormatMenuMobile({ editor, setOpen }: Props) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [image, setImage] = useState<File | null>(null);
   const [activeFormats, setActiveFormats] = useState<Record<string, boolean>>(
     {},
   );
-  const { toast } = useToast();
 
   // useEffect(() => {
   //   if (!image) return;
@@ -165,15 +163,17 @@ export default function FormatMenuMobile({ editor, setOpen }: Props) {
       if (editor) {
         const command = option.command as CommandKeys;
         if (option.args) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (editor.chain().focus() as any)[command](option.args).run();
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (editor.chain().focus() as any)[command]().run();
         }
 
         // Let the editor finish applying the command, then update formats.
       }
     },
-    [editor, updateActiveFormats],
+    [editor],
   );
   // useEffect(() => {
   //   console.log("activeFormats:", activeFormats);

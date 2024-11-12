@@ -1,13 +1,10 @@
 import { NodeViewWrapper, NodeViewProps, Node } from "@tiptap/react";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import { cn } from "@/lib/utils";
-import NextImage from "next/image";
-import { dropImagePlugin, UploadFn } from "@/components/tiptap/dropImagePlugin";
+import { dropImagePlugin } from "@/components/tiptap/dropImagePlugin";
 import ImageContainerBlurClient from "../ui/image/image-container-blur-client";
-import { useEffect, useState } from "react";
 
 // Define a React component to handle image rendering
-const CustomImage = ({ node, updateAttributes }: NodeViewProps) => {
+const CustomImage = ({ node }: NodeViewProps) => {
   const { src, alt } = node.attrs;
 
   return (
@@ -40,7 +37,7 @@ declare module "@tiptap/core" {
 // Extend the Tiptap Image extension to use the custom component
 export const CustomImageExtension = (
   compressedSize: number,
-  uploadFn?: UploadFn,
+  // uploadFn?: UploadFn,
 ) => {
   return Node.create({
     name: "image",
@@ -78,9 +75,10 @@ export const CustomImageExtension = (
         }),
       },
     ],
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     toDOM: (node: any) => ["img", node.attrs],
     renderHTML: ({ HTMLAttributes }) => ["img", HTMLAttributes],
-    // @ts-ignore
     addCommands() {
       return {
         setImage:

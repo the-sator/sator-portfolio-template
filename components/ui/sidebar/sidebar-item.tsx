@@ -14,7 +14,6 @@ import { MdArticle, MdDashboard, MdDesignServices } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { getLocale } from "next-intl/server";
 const items = [
   {
     title: "Analytic",
@@ -59,12 +58,9 @@ const items = [
     ],
   },
 ];
-type Props = {
-  locale: string;
-};
-export default function SidebarItem({ locale }: Props) {
+
+export default function SidebarItem() {
   const pathname = usePathname();
-  console.log("pathname:", pathname);
   return (
     <SidebarContent>
       {items.map((item) => (

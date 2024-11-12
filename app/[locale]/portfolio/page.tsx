@@ -1,7 +1,6 @@
 import ImageContainer from "@/components/ui/image/image-container";
 import Tag from "@/components/ui/tag";
 import placeholder from "@/public/image/placeholder-portfolio.png";
-import { getLocale } from "next-intl/server";
 import Link from "next/link";
 import React from "react";
 import { IoAddOutline } from "react-icons/io5";

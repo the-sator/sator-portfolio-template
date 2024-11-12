@@ -24,7 +24,6 @@ import {
 import TagSkeleton from "../skeleton/tag-skeleton";
 // import { revalidatePathClient } from "@/action";
 // import { createTags } from "@/action/tag";
-import { useToast } from "@/hooks/use-toast";
 import Tag from "../tag";
 import Spinner from "../spinner";
 import TagEditDropdown from "../dropdown/category-edit-dropdown";
@@ -32,25 +31,21 @@ import TagEditDropdown from "../dropdown/category-edit-dropdown";
  * Variants for the multi-select component to handle different styles.
  * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
  */
-const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
+const multiSelectVariants = cva("m-1", {
+  variants: {
+    variant: {
+      default:
+        "border-foreground/10 text-foreground bg-transparent hover:bg-accent",
+      secondary:
+        "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
+      destructive:
+        "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 /**
  * Props for MultiSelect component
@@ -129,13 +124,13 @@ export const CategoryMultiSelect = React.forwardRef<
     {
       options,
       onValueChange,
-      variant,
+      variant = "default",
       defaultValue = [],
       placeholder = "Select options",
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = false,
+      asChild = true,
       className,
       onTagUpdate,
       ...props
@@ -148,9 +143,9 @@ export const CategoryMultiSelect = React.forwardRef<
     const [isAnimating, setIsAnimating] = React.useState(false);
     const [empty, setEmpty] = React.useState(false);
     const [inputValue, setInputValue] = React.useState("");
-    const { toast } = useToast();
+
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [tagLoading, setTagLoading] = React.useState(false);
+    const [, setTagLoading] = React.useState(false);
     const [isLoading, startLoadingTransition] = React.useTransition();
 
     React.useEffect(() => {
@@ -168,51 +163,50 @@ export const CategoryMultiSelect = React.forwardRef<
         setTagLoading(true);
         if (empty || options.length == 0) {
           startLoadingTransition(async () => {
-            try {
-              const { error } = await createTags({ name: inputValue.trim() });
-
-              if (error) {
-                if (error.code === "23505") {
-                  toast({
-                    title: "Error Creating Tag",
-                    description: "Cannot create tag with the same name",
-                    variant: "destructive",
-                  });
-                } else if (error.code === "23514") {
-                  toast({
-                    title: "Error Creating Tag",
-                    description: "Tag name cannot be longer than 20 characters",
-                    variant: "destructive",
-                  });
-                } else {
-                  toast({
-                    title: "Error Creating Tag",
-                    description: error.message || "An unknown error occurred",
-                    variant: "destructive",
-                  });
-                }
-              } else {
-                toast({
-                  title: "Tag Created",
-                  description: "The tag was created successfully",
-                  variant: "success",
-                });
-                setInputValue("");
-                // revalidatePathClient("/create");
-                if (onTagUpdate) {
-                  onTagUpdate();
-                }
-              }
-            } catch (error: unknown) {
-              toast({
-                title: "An unexpected error occurred",
-                description:
-                  error instanceof Error ? error.message : String(error),
-                variant: "destructive",
-              });
-            } finally {
-              setTagLoading(false);
-            }
+            // try {
+            //   const { error } = await createTags({ name: inputValue.trim() });
+            //   if (error) {
+            //     if (error.code === "23505") {
+            //       toast({
+            //         title: "Error Creating Tag",
+            //         description: "Cannot create tag with the same name",
+            //         variant: "destructive",
+            //       });
+            //     } else if (error.code === "23514") {
+            //       toast({
+            //         title: "Error Creating Tag",
+            //         description: "Tag name cannot be longer than 20 characters",
+            //         variant: "destructive",
+            //       });
+            //     } else {
+            //       toast({
+            //         title: "Error Creating Tag",
+            //         description: error.message || "An unknown error occurred",
+            //         variant: "destructive",
+            //       });
+            //     }
+            //   } else {
+            //     toast({
+            //       title: "Tag Created",
+            //       description: "The tag was created successfully",
+            //       variant: "success",
+            //     });
+            //     setInputValue("");
+            //     // revalidatePathClient("/create");
+            //     if (onTagUpdate) {
+            //       onTagUpdate();
+            //     }
+            //   }
+            // } catch (error: unknown) {
+            //   toast({
+            //     title: "An unexpected error occurred",
+            //     description:
+            //       error instanceof Error ? error.message : String(error),
+            //     variant: "destructive",
+            //   });
+            // } finally {
+            //   setTagLoading(false);
+            // }
           });
         }
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
@@ -251,13 +245,14 @@ export const CategoryMultiSelect = React.forwardRef<
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild={asChild}>
           <Button
             ref={ref}
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              "flex h-auto min-h-10 w-full items-center justify-between rounded-md bg-inherit p-1 hover:bg-neutral-700/50",
+              "flex h-auto min-h-10 w-full items-center justify-between rounded-md bg-inherit p-1",
+              multiSelectVariants({ variant }),
               className,
             )}
           >

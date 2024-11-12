@@ -1,27 +1,18 @@
 "use client";
-import React, {
-  useEffect,
-  useRef,
-  forwardRef,
-  useImperativeHandle,
-  useState,
-} from "react";
-import { useEditor, EditorContent, ReactNodeViewRenderer } from "@tiptap/react";
+import React, { useRef, forwardRef, useImperativeHandle } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
-import { all, common, createLowlight } from "lowlight";
+import { all, createLowlight } from "lowlight";
 
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import BulletList from "@tiptap/extension-bullet-list";
 import { Heading } from "@tiptap/extension-heading";
 import Link from "@tiptap/extension-link";
-import { EditorEvents, JSONContent, mergeAttributes } from "@tiptap/core";
+import { EditorEvents, mergeAttributes } from "@tiptap/core";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { Button } from "../ui/button";
 import { CustomImageExtension } from "./TipTapImage";
 // import { uploadImage } from "@/data/client/image";
 import { CodeBlockExtension } from "./CustomCodeBlock";
-import CodeBlock from "@tiptap/extension-code-block";
 import { cn } from "@/lib/utils";
 
 export interface TiptapEditorRef {
@@ -38,7 +29,7 @@ interface TiptapEditorProps {
 
 const TiptapEditor = forwardRef<TiptapEditorRef, TiptapEditorProps>(
   (props, ref) => {
-    const { onUpdate, onFocus, onBlur, onChange, className } = props;
+    const { onUpdate, onFocus, onBlur, className } = props;
     const editorRef = useRef<HTMLDivElement>(null);
     const codeBlockLowLight = CodeBlockExtension.configure({
       lowlight: createLowlight(all),

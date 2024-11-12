@@ -1,21 +1,11 @@
-import React, { ChangeEventHandler, useState } from "react";
+import React, { useState } from "react";
 import {
   NodeViewWrapper,
   NodeViewContent,
   NodeViewProps,
-  Node,
-  mergeAttributes,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { LANGUAGE } from "@/constant/language";
 import CopyButton from "../ui/button/copy-button";
@@ -23,7 +13,7 @@ import { Combobox } from "../ui/combobox";
 // import './CodeBlockComponent.scss'
 
 const CustomCodeBlock = (props: NodeViewProps) => {
-  const { updateAttributes, extension, node } = props;
+  const { updateAttributes, node } = props;
   const [selectedLanguage, setSelectedLanguage] = useState(
     node.attrs.language || "js",
   );

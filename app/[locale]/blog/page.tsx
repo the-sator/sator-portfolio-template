@@ -4,7 +4,6 @@ import React from "react";
 import { IoAddOutline } from "react-icons/io5";
 import placeholder from "@/public/image/placeholder-portfolio.png";
 import Tag from "@/components/ui/tag";
-import { Button } from "@/components/ui/button";
 
 export default function Blogpage() {
   return (

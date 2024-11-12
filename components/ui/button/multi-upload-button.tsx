@@ -5,7 +5,7 @@ import { Input } from "../input";
 type UploadButtonProps = {
   children: React.ReactNode;
   className?: string;
-  setImage?: Dispatch<SetStateAction<File[] | null>>;
+  setImage: Dispatch<SetStateAction<File[] | null>>;
 };
 export default function MultiUploadButton({
   children,
@@ -24,7 +24,7 @@ export default function MultiUploadButton({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const filesArray = Array.from(event.target.files);
-      setImage && setImage(filesArray);
+      setImage(filesArray);
     }
   };
   return (

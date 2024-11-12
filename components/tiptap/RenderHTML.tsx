@@ -8,17 +8,17 @@ import { createLowlight, all } from "lowlight";
 import { json } from "stream/consumers";
 import Heading from "@tiptap/extension-heading";
 import Link from "@tiptap/extension-link";
-import { Note } from "@/types/note.type";
+import { BlockNode } from "@/types/text.type";
 type Props = {
-  note: Note;
+  node: BlockNode[];
 };
 
-export default function RenderHTML({ note }: Props) {
+export default function RenderHTML({ node }: Props) {
   const output = useMemo(() => {
     return generateHTML(
       {
         type: "doc",
-        content: note.content as JSONContent[],
+        content: node as JSONContent[],
       },
       [
         StarterKit.configure({ codeBlock: false }),
@@ -56,7 +56,7 @@ export default function RenderHTML({ note }: Props) {
           autolink: true,
           defaultProtocol: "https",
         }),
-      ]
+      ],
     );
   }, [json]);
 

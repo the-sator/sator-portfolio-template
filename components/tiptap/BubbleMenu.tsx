@@ -7,7 +7,6 @@ import {
   List,
   ListOrdered,
   Heading as HeadingIcon,
-  Highlighter,
   Italic,
   Quote,
   Strikethrough,

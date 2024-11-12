@@ -10,18 +10,10 @@ type Props = {
   editor: Editor | null;
   inputRef: RefObject<HTMLDivElement>;
 };
-const Tiptap = ({ editor, inputRef }: Props) => {
-  const onSubmit = async (content: any) => {
-    // const { data, error } = await sendNote(content);
-    // if (error) {
-    //   console.log(error);
-    // }
-    // console.log("Success");
-    // console.log(data);
-  };
+const Tiptap = ({ editor }: Props) => {
   if (!editor) {
     return (
-      <div className="w-full justify-center flex h-[300px]  items-center">
+      <div className="flex h-[300px] w-full items-center justify-center">
         <AiOutlineLoading3Quarters className="animate-spin" size={20} />
       </div>
     );

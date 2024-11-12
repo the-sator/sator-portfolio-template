@@ -10,14 +10,14 @@ import {
 
 import { Button } from "../button";
 import { IoLanguage } from "react-icons/io5";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 type Props = {
   currentLocale: string;
 };
 export default function LanguageDropdown({ currentLocale }: Props) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   function onSelectChange(locale: string) {
     console.log("locale:", locale);

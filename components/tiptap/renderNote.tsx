@@ -6,9 +6,7 @@ import {
   TextNode,
 } from "@/types/text.type";
 import hljs from "highlight.js";
-import Image from "next/image";
 import React, { JSX } from "react";
-import CodeBlock from "@/components/tiptap/CodeBlock";
 import CopyButton from "@/components/ui/button/copy-button";
 import { LANGUAGE } from "@/constant/language";
 
