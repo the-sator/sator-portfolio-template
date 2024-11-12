@@ -1,0 +1,17 @@
+export const LANGUAGE = [
+  { label: "Javascript", value: "js" },
+  { label: "Typescript", value: "ts" },
+  { label: "Go", value: "go" },
+  { label: "Java", value: "java" },
+  { label: "HTML", value: "html" },
+  { label: "CSS", value: "css" },
+  { label: "Python", value: "python" },
+  { label: "Ruby", value: "ruby" },
+  { label: "PHP", value: "php" },
+  { label: "C#", value: "csharp" },
+  { label: "C++", value: "cpp" },
+  { label: "Rust", value: "rust" },
+  { label: "Kotlin", value: "kotlin" },
+  { label: "Swift", value: "swift" },
+  { label: "Bash", value: "bash" },
+];
