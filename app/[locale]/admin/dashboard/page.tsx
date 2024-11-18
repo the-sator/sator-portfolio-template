@@ -1,7 +1,7 @@
-import { OverallChart } from "./_feature/overall-chart";
-import OverallStatisticCards from "./_feature/overall-statistic-cards";
-import { OverallBlogTrendChart } from "./_feature/overall-blog-trend-chart";
-import { OverallPortfolioTrendChart } from "./_feature/overall-portfolio-trend-chart";
+import { OverallChart } from "../_feature/overall-chart";
+import OverallStatisticCards from "../_feature/overall-statistic-cards";
+import { OverallBlogTrendChart } from "../_feature/overall-blog-trend-chart";
+import { OverallPortfolioTrendChart } from "../_feature/overall-portfolio-trend-chart";
 import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 type Props = {

@@ -47,7 +47,7 @@ export default async function PortfolioPage() {
           />
         </Link> */}
         <CustomCreateButton
-          href="/portfolio/create"
+          href="/admin/portfolio/create"
           className="min-h-[300px] w-[250px] px-4 py-1"
         />
       </div>

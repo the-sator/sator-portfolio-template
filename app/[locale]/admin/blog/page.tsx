@@ -45,7 +45,7 @@ export default function Blogpage() {
             </div>
           </div>
         </div>
-        <CustomCreateButton href="/blog/create" />
+        <CustomCreateButton href="/admin/blog/create" />
         {/* <Link
           href={"/blog/create"}
           className="group flex min-h-[200px] w-full items-center justify-center rounded-md border border-dashed p-0 transition-all hover:border-black hover:dark:border-label/50"

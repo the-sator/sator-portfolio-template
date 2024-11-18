@@ -21,7 +21,7 @@ const items = [
     children: [
       {
         title: "Dashboard",
-        url: "/",
+        url: "/admin/dashboard",
         icon: MdDashboard,
       },
     ],
@@ -34,13 +34,13 @@ const items = [
     children: [
       {
         title: "Portfolio",
-        url: "/portfolio",
+        url: "/admin/portfolio",
         icon: MdDesignServices,
       },
 
       {
         title: "Blog",
-        url: "/blog",
+        url: "/admin/blog",
         icon: MdArticle,
       },
     ],
