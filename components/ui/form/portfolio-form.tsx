@@ -82,7 +82,7 @@ export default function PortfolioForm() {
     <form action="" className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <Label>Title</Label>
-        <Input variant={"outline"} />
+        <Input variant={"outline"} placeholder="My First Portfolio" />
       </div>
       <div className="flex flex-col gap-4">
         <Label>Category</Label>

@@ -40,7 +40,7 @@ export default function BlogForm() {
     <form action="" className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <Label>Title</Label>
-        <Input />
+        <Input placeholder="My First Blog" variant="outline" />
       </div>
       <div className="flex flex-col gap-4">
         <Label>Category</Label>

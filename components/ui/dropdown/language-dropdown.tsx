@@ -20,13 +20,9 @@ export default function LanguageDropdown({ currentLocale }: Props) {
   const [, startTransition] = useTransition();
 
   function onSelectChange(locale: string) {
-    console.log("locale:", locale);
-    console.log("currentLocale:", currentLocale);
     startTransition(() => {
       // Simply update the locale parameter in the URL
-      console.log("pathname:", pathname);
       const newPath = pathname.replace(`/${currentLocale}`, `/${locale}`);
-      console.log("newPath:", newPath);
       router.push(newPath);
     });
   }
@@ -36,7 +32,7 @@ export default function LanguageDropdown({ currentLocale }: Props) {
         <Button
           className="group flex h-5 w-full justify-between p-0"
           variant="icon"
-          //   size="icon"
+          // size="icon"
         >
           <IoLanguage />
         </Button>

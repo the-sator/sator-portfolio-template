@@ -11,7 +11,7 @@ import {
 } from "./sidebar";
 import { MdArticle, MdDashboard, MdDesignServices } from "react-icons/md";
 // import ThemeSwitch from "../theme-switch";
-import { IoIosSettings } from "react-icons/io";
+import { IoIosHelpCircle, IoIosSettings } from "react-icons/io";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 const items = [
@@ -55,12 +55,25 @@ const items = [
         url: "#",
         icon: IoIosSettings,
       },
+      {
+        title: "Support",
+        url: "#",
+        icon: IoIosHelpCircle,
+      },
     ],
   },
 ];
 
 export default function SidebarItem() {
   const pathname = usePathname();
+  // const path = pathname.split("/")[2];
+  const isActivePath = (currentPath: string, childUrl: string) => {
+    if (childUrl === "/") {
+      return ["/", "/en", "/kh"].includes(currentPath);
+    }
+    return currentPath.replace(/^\/(en|kh)/, "") === childUrl;
+  };
+
   return (
     <SidebarContent>
       {items.map((item) => (
@@ -70,8 +83,12 @@ export default function SidebarItem() {
             <SidebarMenu>
               {item.children.map((child) => (
                 <SidebarMenuItem key={child.title}>
-                  <SidebarMenuButton asChild isActive={pathname === child.url}>
-                    <Link href={`${child.url}`}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActivePath(pathname, child.url)}
+                    // isActive={path === child.url}
+                  >
+                    <Link href={`${child.url}`} className="text-label">
                       <child.icon />
                       <span>{child.title}</span>
                     </Link>

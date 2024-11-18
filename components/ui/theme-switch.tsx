@@ -16,8 +16,7 @@ export default function ThemeSwitch() {
   if (resolvedTheme === "dark") {
     return (
       <IoMdSunny
-        className="cursor-pointer transition-all hover:scale-110"
-        size={24}
+        className="flex-shrink-0 cursor-pointer transition-all hover:scale-110"
         color="white"
         onClick={() => setTheme("light")}
       />
@@ -27,8 +26,7 @@ export default function ThemeSwitch() {
   if (resolvedTheme === "light") {
     return (
       <MdDarkMode
-        className="cursor-pointer text-neutral-900 transition-all hover:scale-110"
-        size={24}
+        className="flex-shrink-0 cursor-pointer text-neutral-900 transition-all hover:scale-110"
         onClick={() => setTheme("dark")}
       />
     );

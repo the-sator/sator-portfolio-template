@@ -249,9 +249,10 @@ export const CategoryMultiSelect = React.forwardRef<
           <Button
             ref={ref}
             {...props}
+            variant={"outline"}
             onClick={handleTogglePopover}
             className={cn(
-              "flex h-auto min-h-10 w-full items-center justify-between rounded-md bg-inherit p-1",
+              "flex h-auto min-h-10 w-full items-center justify-between rounded-md bg-inherit px-3 py-1",
               multiSelectVariants({ variant }),
               className,
             )}

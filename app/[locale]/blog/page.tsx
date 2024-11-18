@@ -4,6 +4,7 @@ import React from "react";
 import { IoAddOutline } from "react-icons/io5";
 import placeholder from "@/public/image/placeholder-portfolio.png";
 import Tag from "@/components/ui/tag";
+import CustomCreateButton from "@/components/ui/button/custom-create-button";
 
 export default function Blogpage() {
   return (
@@ -44,7 +45,8 @@ export default function Blogpage() {
             </div>
           </div>
         </div>
-        <Link
+        <CustomCreateButton href="/blog/create" />
+        {/* <Link
           href={"/blog/create"}
           className="group flex min-h-[200px] w-full items-center justify-center rounded-md border border-dashed p-0 transition-all hover:border-black hover:dark:border-label/50"
         >
@@ -52,7 +54,7 @@ export default function Blogpage() {
             size={24}
             className="text-border group-hover:text-black group-hover:dark:text-label/50"
           />
-        </Link>
+        </Link> */}
       </div>
     </div>
   );
