@@ -11,7 +11,11 @@ import {
   SelectValue,
 } from "./select";
 import { UseFormRegisterReturn } from "react-hook-form";
-type SelectOption = {
+import { cn } from "@/lib/utils";
+import { TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import { Tooltip } from "@radix-ui/react-tooltip";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+export type SelectOption = {
   value: string;
   label: string;
 };
@@ -27,6 +31,8 @@ type Props = {
   defaultValue?: string;
   required?: boolean;
   minHeight?: number;
+  className?: string;
+  instruction?: string;
   register?: UseFormRegisterReturn;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errors?: ZodErrorFormatted | null;
@@ -37,6 +43,7 @@ type SelectWithLabelProps = {
   placeholder?: string;
   name?: string;
   options: SelectOption[];
+  errors?: ZodErrorFormatted | null;
 };
 export function InputWithLabel({
   label,
@@ -44,25 +51,51 @@ export function InputWithLabel({
   name,
   type = "text",
   placeholder,
+  maxLength,
   onChange,
+  className,
+  instruction,
   value,
   defaultValue,
   errors,
   register,
 }: Props) {
   return (
-    <div className="flex flex-col gap-3">
-      <Label htmlFor={name}>{label}</Label>
+    <div className={cn("flex flex-col gap-3", className)}>
+      <Label htmlFor={name} className="flex items-center gap-2">
+        <div>
+          {label}
+          {required && <span className="text-red-500">{" *"}</span>}
+        </div>
+        {instruction && (
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger>
+                <span className="sr-only w-full basis-1/2">Instruction</span>
+                <AiOutlineExclamationCircle size={16} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{instruction}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          // <Button variant="icon" className="h-4 w-4 p-0">
+
+          // </Button>
+        )}
+      </Label>
       <Input
         {...register}
         type={type}
         name={name}
         variant={"outline"}
         placeholder={placeholder}
+        maxLength={maxLength}
         value={value}
         required={required}
         defaultValue={defaultValue}
         onChange={onChange}
+        className={cn(errors && "border-red-400")}
       />
       {errors && (
         <p className="text-xs text-red-400">
@@ -146,7 +179,10 @@ export function TextAreaWithLabel({
   };
   return (
     <div className="relative flex h-full flex-col gap-3">
-      <Label>{label}</Label>
+      <Label>
+        {label}
+        <span className="text-red-500">{required && " *"}</span>
+      </Label>
       <Textarea
         {...register}
         name={name}
@@ -175,6 +211,7 @@ export function SelectWithLabel({
   defaultValue,
   placeholder,
   name,
+  errors,
 }: SelectWithLabelProps) {
   return (
     <div className="flex flex-col gap-3">
@@ -192,6 +229,16 @@ export function SelectWithLabel({
           ))}
         </SelectContent>
       </Select>
+      {errors && (
+        <p className="text-xs text-red-400">
+          {errors._errors.map((error, index) => (
+            <span key={index}>
+              {error}
+              <br />
+            </span>
+          ))}
+        </p>
+      )}
     </div>
   );
 }
