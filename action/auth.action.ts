@@ -1,8 +1,8 @@
 "use server";
 
-import { siteUserLogin } from "@/data/site-user";
+import { siteUserLogin, siteUserSignout } from "@/data/site-user";
 import { SiteUserLogin, SiteUserLoginSchema } from "@/types/site-user.type";
-import { setSessionCookies } from "@/utils/session";
+import { deleteSessionCookies, setSessionCookies } from "@/utils/session";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -33,4 +33,19 @@ export async function siteUserLoginAction(formData: unknown) {
   revalidatePath("/", "layout");
   revalidateTag("site-user-session");
   redirect("/admin-panel/dashboard");
+}
+
+export async function siteUserSignoutAction() {
+  const { error } = await siteUserSignout();
+  if (!error) {
+    await deleteSessionCookies("session-site-user");
+    revalidatePath("/", "layout");
+    revalidateTag("session-site-user");
+    revalidateTag("admin");
+    redirect("/admin-panel/login");
+  } else {
+    return {
+      error: error,
+    };
+  }
 }

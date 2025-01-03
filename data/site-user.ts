@@ -19,10 +19,18 @@ export const siteUserLogin = async (payload: CreateSiteUser) => {
   return { data, error };
 };
 
+export const siteUserSignout = async () => {
+  const { error } = await fetchApi.post<SiteUserSession>(
+    `${getPath()}/signout`,
+    ["session-site-user"],
+  );
+  return { error };
+};
+
 export const getSiteUserSession = cache(async () => {
   const { data, error } = await fetchApi.get<SiteUserSession>(
     `${getPath()}/me`,
-    ["site-user-session"],
+    ["session-site-user"],
   );
   const { user, session } = data || {};
 
