@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -13,12 +13,16 @@ import { MdDelete } from "react-icons/md";
 import { Input } from "../input";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
-// import { updateTag } from "@/data/client/tag";
+import { CreateCategory } from "@/types/category.type";
+import {
+  deleteCategoryAction,
+  updateCategoryAction,
+} from "@/action/category.action";
+import { toast } from "@/hooks/use-toast";
+import { Color } from "@/enum/base.enum";
 
-// import { revalidatePathClient } from "@/action";
-// import { deleteTag } from "@/action/tag";
 type Props = {
-  tag: {
+  category: {
     label: string;
     value: string;
     color?: string;
@@ -26,23 +30,21 @@ type Props = {
       className?: string;
     }>;
   };
-  onTagUpdate?: () => Promise<void>;
   startLoadingTransition: React.TransitionStartFunction;
 };
 
-export default function TagEditDropdown({
-  tag,
-  // onTagUpdate,
-  // startLoadingTransition,
+export default function CategoryEditDropdown({
+  category,
+  // onCategoryUpdate,
+  startLoadingTransition,
 }: Props) {
   const [open, setOpen] = useState(false); // Track dropdown open state
   // const router = useRouter();
 
-  const { register, setValue, watch } = useForm({
+  const { register, setValue, watch, handleSubmit } = useForm({
     defaultValues: {
-      name: tag.label,
-      color: tag.color,
-      id: tag.value,
+      name: category.label,
+      color: category.color?.toUpperCase() as Color,
     },
   });
 
@@ -60,81 +62,92 @@ export default function TagEditDropdown({
   };
   const selectedColor = watch("color"); // Watch the selected color
 
-  //   const isDataChanged = (data: any) => {
-  //     return data.name !== tag.label || data.color !== tag.color;
-  //   };
-  //   const handleUpdateTag = useCallback(
-  //     async (data: any) => {
-  //       if (!isDataChanged(data)) {
-  //         console.log("No changes, skipping update.");
-  //         return;
-  //       }
-  //       startLoadingTransition(async () => {
-  //         try {
-  //           const { error } = await updateTag(data);
-  //           if (error) {
-  //             toast({
-  //               title: "Error Updating Tag!",
-  //               description: error.message,
-  //               variant: "destructive",
-  //             });
-  //             return;
-  //           }
-  //           if (onTagUpdate) {
-  //             onTagUpdate();
-  //           }
-  //           revalidatePathClient("/create");
-  //         } catch (error: unknown) {
-  //           toast({
-  //             title: "Error Updating Tag!",
-  //             description: error instanceof Error ? error.message : String(error),
-  //             variant: "destructive",
-  //           });
-  //         }
-  //       });
-  //     },
-  //     [toast, onTagUpdate, isDataChanged]
-  //   );
+  const handleUpdateCategory = useCallback(
+    async (data: CreateCategory) => {
+      const isDataChanged = (data: CreateCategory) => {
+        return data.name !== category.label || data.color !== category.color;
+      };
+      if (!isDataChanged(data)) {
+        console.log("No changes, skipping update.");
+        return;
+      }
+      console.log("Data: ", data);
+      // return;
+      startLoadingTransition(async () => {
+        try {
+          const response = await updateCategoryAction(category.value, data);
+          console.log("response:", response);
+          if (response.error) {
+            if ("statusCode" in response.error) {
+              toast({
+                title: "Update Category Error",
+                description: response.error.error,
+                variant: "destructive",
+                duration: 1500,
+              });
+            } else {
+              toast({
+                title: "Update Category Error",
+                description: response.error.name?._errors,
+                variant: "destructive",
+                duration: 1500,
+              });
+            }
+          } else {
+            toast({
+              title: "Category Updated",
+              variant: "success",
+            });
+          }
+        } catch (error: unknown) {
+          toast({
+            title: "Error Updating Category!",
+            description: error instanceof Error ? error.message : String(error),
+            variant: "destructive",
+          });
+        }
+      });
+    },
+    [startLoadingTransition, category],
+  );
 
-  //   const handleDeleteTag = async (e: React.MouseEvent<HTMLDivElement>) => {
-  //     e.preventDefault();
-  //     e.stopPropagation();
-  //     startLoadingTransition(async () => {
-  //       try {
-  //         const { error } = await deleteTag(+tag.value);
-  //         if (error) {
-  //           toast({
-  //             title: "Error Deleting Tag!",
-  //             description: error.message,
-  //             variant: "destructive",
-  //           });
-  //           return;
-  //         }
-  //         toast({
-  //           title: "Successfully Delete Tag!",
-  //           variant: "success",
-  //         });
-  //         if (onTagUpdate) {
-  //           onTagUpdate();
-  //         }
-  //         revalidatePathClient("/create");
-  //       } catch (error: unknown) {
-  //         toast({
-  //           title: "Error Updating Tag!",
-  //           description: error instanceof Error ? error.message : String(error),
-  //           variant: "destructive",
-  //         });
-  //       }
-  //     });
-  //   };
+  const handleDeleteCategory = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    startLoadingTransition(async () => {
+      try {
+        const { error } = await deleteCategoryAction(category.value);
+        if (error) {
+          toast({
+            title: "Error Deleting Category!",
+            description: error.error,
+            variant: "destructive",
+          });
+          return;
+        }
+        toast({
+          title: "Successfully Delete Category!",
+          variant: "success",
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Error Updating Category!",
+          description: error instanceof Error ? error.message : String(error),
+          variant: "destructive",
+        });
+      }
+    });
+  };
 
   return (
     <DropdownMenu
       open={open} // Control open state
       onOpenChange={(isOpen) => {
-        // if (!isOpen) {
-        //   handleSubmit(handleUpdateTag)(); // Trigger form submission when the dropdown closes
-        // }
+        if (!isOpen) {
+          handleSubmit(handleUpdateCategory)(); // Trigger form submission when the dropdown closes
+        }
         console.log("Changing");
         setOpen(isOpen); // Update state
       }}
@@ -160,16 +173,18 @@ export default function TagEditDropdown({
           <Input
             {...register("name")}
             variant={"outline"}
+            autoComplete="off"
             className="h-8 text-[12px]"
-            onClick={(event) => {
-              event.stopPropagation();
-              event.preventDefault();
-            }}
           />
         </div>
         <DropdownMenuItem>
           <MdDelete className="mr-2 h-4 w-4 text-red-400" />
-          <Button variant={"icon"} size={"icon"} className="h-fit text-red-400">
+          <Button
+            onClick={handleDeleteCategory}
+            variant={"icon"}
+            size={"icon"}
+            className="h-fit text-red-400"
+          >
             Delete
           </Button>
         </DropdownMenuItem>
@@ -180,12 +195,14 @@ export default function TagEditDropdown({
             key={colorName}
             className={cn(
               "flex cursor-pointer items-center gap-4",
-              selectedColor === colorName ? "bg-neutral-700/50" : "", // Highlight selected color
+              selectedColor === colorName.toUpperCase()
+                ? "bg-neutral-700/50"
+                : "", // Highlight selected color
             )}
             onClick={(event) => {
               event.stopPropagation();
               event.preventDefault();
-              setValue("color", colorName);
+              setValue("color", colorName.toUpperCase() as Color);
             }} // Set color on click
           >
             <div className={cn("size-2 rounded-full border", classes)}></div>

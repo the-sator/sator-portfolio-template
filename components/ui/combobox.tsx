@@ -1,56 +1,25 @@
-"use client";
-
-import * as React from "react";
-import { Check, ChevronDown } from "lucide-react";
-
+import React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-
 import {
-  Command,
+  CommandInput,
+  CommandList,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-type Options = {
-  value: string;
+} from "cmdk";
+import { ChevronsUpDown, Command, Check } from "lucide-react";
+import { Button } from "./button";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+export type ComboboxOption = {
   label: string;
+  value: string;
 };
-
-type ComboboxProps = {
-  options: Options[];
-  label?: string;
-  size?: "sm" | "md" | "lg";
-  className?: string;
-  onChange?: (value: string) => void;
-  defaultValue?: string;
+type Props = {
+  options: ComboboxOption[];
 };
-
-const sizeClasses = {
-  sm: "w-[150px]",
-  md: "w-[200px]",
-  lg: "w-[400px]",
-};
-
-export function Combobox({
-  size = "md",
-  options,
-  className,
-  label = "Select option...",
-  defaultValue,
-  onChange,
-}: ComboboxProps) {
+export default function Combobox({ options }: Props) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(defaultValue);
-
+  const [value, setValue] = React.useState("");
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -58,44 +27,36 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn(
-            `${sizeClasses[size]} w-full justify-between rounded-sm font-normal`,
-            className,
-          )}
+          className="w-[200px] justify-between"
         >
-          <p className="w-2/3">
-            {value
-              ? options.find((option) => option.value === value)?.label
-              : label}
-          </p>
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {value
+            ? options.find((option) => option.value === value)?.label
+            : "Select framework..."}
+          <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={`${sizeClasses[size]} p-0`}>
+      <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search option..." />
+          <CommandInput placeholder="Search framework..." />
           <CommandList>
-            <CommandEmpty>No option found.</CommandEmpty>
+            <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    if (onChange) {
-                      onChange(currentValue);
-                    }
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
+                  {option.label}
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "ml-auto",
                       value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
-                  {option.label}
                 </CommandItem>
               ))}
             </CommandGroup>

@@ -8,6 +8,14 @@ const nextConfig: NextConfig = {
   sassOptions: {
     silenceDeprecations: ["legacy-js-api"],
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: process.env.AWS_PUBLIC_BUCKET_URL!,
+      },
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

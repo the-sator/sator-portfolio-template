@@ -1,19 +1,20 @@
 import PortfolioForm from "@/components/ui/form/portfolio-form";
-import { getAdminSession } from "@/data/admin";
-import { getAllCategories } from "@/data/category";
+import { ADMIN_LOGIN_PATH } from "@/constant/base";
+import { getCategory } from "@/data/category";
+import { getSiteUserSession } from "@/data/site-user";
 import { redirect } from "next/navigation";
 
 export default async function App() {
-  const [{ auth }, { data: categories }] = await Promise.all([
-    getAdminSession(),
-    getAllCategories(),
+  const [{ user }, { data: categories }] = await Promise.all([
+    getSiteUserSession(),
+    getCategory(),
   ]);
-  if (!auth) {
-    return redirect("/admin-panel/login");
+  if (!user) {
+    return redirect(ADMIN_LOGIN_PATH);
   }
   return (
     <div className="p-4">
-      <PortfolioForm admin={auth} categories={categories || []} />
+      <PortfolioForm user={user} categories={categories || []} />
     </div>
   );
 }

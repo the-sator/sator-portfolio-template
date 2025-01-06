@@ -1,5 +1,26 @@
 {
   "Dashboard": {
     "dashboard": "ក្ដារទិន្នន័យ"
+  },
+  "SidebarItem": {
+    "dashboard": "ក្ដារទិន្នន័យ",
+    "user": "អតិថិជន",
+    "site-user": "អតិថិជនគេហទំព័រ",
+    "admin": "រដ្ធបាល",
+    "blog": "អត្ថបទ",
+    "setting": "កែទម្រង់",
+    "support": "ជំនួយ",
+    "portfolio-form": "សំណួរស្នាដៃ",
+    "chat": "ផ្ញើសារ",
+    "analytic": "វិភាគ",
+    "role": "តំណែង",
+    "permission": "ភាពអនុញ្ញាត",
+    "user-management": "គ្រប់គ្រងអតិថិជន",
+    "admin-management": "គ្រប់គ្រងរដ្ធបាល",
+    "content-management": "គ្រប់គ្រងវេទិការ",
+    "communication": "ទំនាក់ទំនង",
+    "configuration": "រចនាសម្ព័ន្ធ",
+    "portfolio": "ស្នាដៃ",
+    "content": "វេទិការ"
   }
 }

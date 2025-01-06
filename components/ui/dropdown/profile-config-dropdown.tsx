@@ -13,10 +13,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { Button } from "../button";
 import { ChevronsUpDown } from "lucide-react";
 import { IoLogOutSharp } from "react-icons/io5";
-import { siteUserSignoutAction } from "@/action/auth.action";
 import { toast } from "@/hooks/use-toast";
-
-export default function ProfileConfigDropdown() {
+import { siteUserSignoutAction } from "@/action/auth.action";
+import { SiteUser } from "@/types/site-user.type";
+type Props = {
+  user: SiteUser;
+};
+export default function ProfileConfigDropdown({ user }: Props) {
   const handleSignout = async () => {
     const { error } = await siteUserSignoutAction();
     if (error) {
@@ -40,9 +43,9 @@ export default function ProfileConfigDropdown() {
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-left text-sm">Ponleu</p>
+              <p className="text-left text-sm">{user.username}</p>
               <p className="text-xs text-muted-foreground group-hover:text-accent-foreground/50">
-                ponleu@gmail.com
+                {user.email}
               </p>
             </div>
           </div>

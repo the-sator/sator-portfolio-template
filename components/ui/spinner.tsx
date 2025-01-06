@@ -1,12 +1,14 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 type Props = {
   size?: number;
+  className?: string;
 };
-export default function Spinner({ size = 14 }: Props) {
+export default function Spinner({ size = 14, className }: Props) {
   return (
     <AiOutlineLoading3Quarters
-      className="animate-spin text-neutral-500"
+      className={cn("animate-spin text-foreground", className)}
       size={size}
     />
   );
