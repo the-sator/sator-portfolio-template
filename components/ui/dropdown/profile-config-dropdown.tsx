@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   DropdownMenu,
@@ -12,8 +13,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { Button } from "../button";
 import { ChevronsUpDown } from "lucide-react";
 import { IoLogOutSharp } from "react-icons/io5";
+import { siteUserSignoutAction } from "@/action/auth.action";
+import { toast } from "@/hooks/use-toast";
 
 export default function ProfileConfigDropdown() {
+  const handleSignout = async () => {
+    const { error } = await siteUserSignoutAction();
+    if (error) {
+      toast({
+        title: "Error Signing Out",
+        description: error.error,
+        variant: "destructive",
+      });
+    }
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,10 +53,18 @@ export default function ProfileConfigDropdown() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <IoLogOutSharp className="text-red-500" />
-
-            <p className="text-red-500">Logout</p>
+          <DropdownMenuItem
+            className="p-0"
+            onSelect={(e) => e.preventDefault()}
+          >
+            <Button
+              variant={"icon"}
+              onClick={handleSignout}
+              className="flex h-fit w-full items-center justify-start gap-2 px-2 py-2 font-normal text-red-500 opacity-80 hover:opacity-100"
+            >
+              <IoLogOutSharp className="text-red-500" />
+              <p className="text-red-500">Logout</p>
+            </Button>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
