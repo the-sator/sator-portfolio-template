@@ -1,0 +1,29 @@
+.bn-container[data-sator-theme] .bn-editor {
+  padding-inline: 12px;
+}
+.bn-container[data-sator-theme][data-color-scheme="light"] {
+  --bn-colors-editor-text: hsl(0, 0%, 10%);
+  --bn-colors-hovered-text: hsl(0, 0%, 55%);
+  --bn-colors-editor-background: transparent;
+  --bn-colors-side-menu: hsl(0, 0%, 45%);
+}
+.bn-container[data-sator-theme][data-color-scheme="dark"] {
+  --bn-colors-editor-text: hsl(0, 0%, 90%);
+  --bn-colors-hovered-text: hsl(0, 0%, 55%);
+  --bn-colors-editor-background: transparent;
+}
+
+.bn-container[data-sator-render-theme] .bn-editor {
+  padding-inline: 0px;
+}
+.bn-container[data-sator-render-theme][data-color-scheme="light"] {
+  --bn-colors-editor-text: hsl(0, 0%, 10%);
+  --bn-colors-hovered-text: hsl(0, 0%, 55%);
+  --bn-colors-editor-background: transparent;
+  --bn-colors-side-menu: hsl(0, 0%, 45%);
+}
+.bn-container[data-sator-render-theme][data-color-scheme="dark"] {
+  --bn-colors-editor-text: hsl(0, 0%, 90%);
+  --bn-colors-hovered-text: hsl(0, 0%, 55%);
+  --bn-colors-editor-background: transparent;
+}

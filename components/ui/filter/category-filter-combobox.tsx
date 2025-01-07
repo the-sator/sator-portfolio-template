@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { WandSparkles, Check } from "lucide-react";
+import { ChevronDown, WandSparkles, Check } from "lucide-react";
 import { IoClose } from "react-icons/io5";
 
 import { cn } from "@/lib/utils";
@@ -21,34 +21,34 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import TagSkeleton from "../skeleton/tag-skeleton";
-// import { revalidatePathClient } from "@/action";
-// import { createTags } from "@/action/tag";
 import Tag from "../tag";
-import Spinner from "../spinner";
-import CategoryEditDropdown from "../dropdown/category-edit-dropdown";
-import { toast } from "@/hooks/use-toast";
-import { createCategoryAction } from "@/action/category.action";
-import { SiteUser } from "@/types/site-user.type";
+import { useDebouncedCallback } from "use-debounce";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 /**
  * Variants for the multi-select component to handle different styles.
  * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
  */
-const multiSelectVariants = cva("m-1", {
-  variants: {
-    variant: {
-      default:
-        "border-foreground/10 text-foreground bg-transparent hover:bg-accent",
-      secondary:
-        "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      destructive:
-        "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const multiSelectVariants = cva(
+  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-foreground/10 text-foreground bg-red-500 hover:bg-card/80",
+        secondary:
+          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        destructive:
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        inverted: "inverted",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
     },
   },
-  defaultVariants: {
-    variant: "default",
-  },
-});
+);
 
 /**
  * Props for MultiSelect component
@@ -74,7 +74,7 @@ interface MultiSelectProps
    * Callback function triggered when the selected values change.
    * Receives an array of the new selected values.
    */
-  onValueChange: (value: string[]) => void;
+  onValueChange?: (value: string[]) => void;
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[];
@@ -115,46 +115,79 @@ interface MultiSelectProps
    * Optional, can be used to add custom styles.
    */
   className?: string;
-  user: SiteUser;
+
+  filterKey: string;
+
+  size?: "sm" | "md" | "lg";
+
+  onTagUpdate?: () => Promise<void>;
 }
 
-export const CategoryMultiSelect = React.forwardRef<
+const sizeClasses = {
+  sm: "min-w-[150px]",
+  md: "min-w-[300px]",
+  lg: "min-w-[400px]",
+};
+
+export const CategoryFilterCombobox = React.forwardRef<
   HTMLButtonElement,
   MultiSelectProps
 >(
   (
     {
       options,
-      onValueChange,
-      variant = "default",
       defaultValue = [],
       placeholder = "Select options",
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = true,
       className,
-      user,
+      size = "md",
+      filterKey,
       ...props
     },
     ref,
   ) => {
+    const defaultValueArray = Array.isArray(defaultValue)
+      ? defaultValue
+      : [defaultValue];
     const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue);
+      React.useState<string[]>(defaultValueArray);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isAnimating, setIsAnimating] = React.useState(false);
-    const [empty, setEmpty] = React.useState(false);
     const [inputValue, setInputValue] = React.useState("");
-
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [, setTagLoading] = React.useState(false);
-    const [isLoading, startLoadingTransition] = React.useTransition();
+    const selectedArray = Array.isArray(selectedValues)
+      ? selectedValues
+      : [selectedValues];
 
     React.useEffect(() => {
       if (JSON.stringify(selectedValues) !== JSON.stringify(defaultValue)) {
-        setSelectedValues(defaultValue);
+        setSelectedValues(selectedValues);
       }
     }, [defaultValue, selectedValues]);
+    const debouncedNavigate = useDebouncedCallback((filters: string[]) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      params.delete(filterKey);
+
+      filters.forEach((filter) => params.append(filterKey, filter));
+
+      const newUrl = `${pathname}?${params.toString()}`;
+      React.startTransition(() => {
+        router.push(newUrl);
+      });
+    }, 500);
+
+    const navigateToFilters = React.useCallback(
+      (filters: string[]) => {
+        debouncedNavigate(filters);
+      },
+      [debouncedNavigate],
+    );
 
     const handleInputKeyDown = async (
       event: React.KeyboardEvent<HTMLInputElement>,
@@ -162,55 +195,10 @@ export const CategoryMultiSelect = React.forwardRef<
       if (event.key === "Enter") {
         event.preventDefault();
         setIsPopoverOpen(true);
-        setTagLoading(true);
-        if (empty || options.length == 0) {
-          startLoadingTransition(async () => {
-            try {
-              const response = await createCategoryAction({
-                name: inputValue.trim(),
-                site_user_id: user.id,
-              });
-              if (response.error) {
-                if ("statusCode" in response.error) {
-                  toast({
-                    title: "Create Category Error",
-                    description: response.error.error,
-                    variant: "destructive",
-                    duration: 1500,
-                  });
-                } else {
-                  toast({
-                    title: "Create Category Error",
-                    description: response.error.name?._errors,
-                    variant: "destructive",
-                    duration: 1500,
-                  });
-                }
-              } else {
-                toast({
-                  title: "Tag Created",
-                  description: "The tag was created successfully",
-                  variant: "success",
-                });
-                setInputValue("");
-              }
-            } catch (error: unknown) {
-              toast({
-                title: "An unexpected error occurred",
-                description:
-                  error instanceof Error ? error.message : String(error),
-                variant: "destructive",
-              });
-            } finally {
-              setTagLoading(false);
-            }
-          });
-        }
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
         const newSelectedValues = [...selectedValues];
         newSelectedValues.pop();
         setSelectedValues(newSelectedValues);
-        onValueChange(newSelectedValues);
       }
     };
 
@@ -219,7 +207,12 @@ export const CategoryMultiSelect = React.forwardRef<
         ? selectedValues.filter((v) => v !== value)
         : [...selectedValues, value];
       setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
+      navigateToFilters(newSelectedValues);
+    };
+
+    const handleClear = () => {
+      setSelectedValues([]);
+      navigateToFilters([]);
     };
 
     const handleTogglePopover = () => {
@@ -229,42 +222,39 @@ export const CategoryMultiSelect = React.forwardRef<
     const clearExtraOptions = () => {
       const newSelectedValues = selectedValues.slice(0, maxCount);
       setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
     };
 
     const handleInputChange = (search: string) => {
       setInputValue(search);
     };
-
     return (
       <Popover
         open={isPopoverOpen}
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild={asChild}>
+        <PopoverTrigger asChild>
           <Button
             ref={ref}
             {...props}
-            variant={"outline"}
             onClick={handleTogglePopover}
+            variant="outline"
+            role="combobox"
             className={cn(
-              "h-auto min-h-10 w-full items-center justify-between rounded-md bg-inherit px-3 py-1",
-              multiSelectVariants({ variant }),
+              `${sizeClasses[size]} h-full justify-between`,
               className,
             )}
           >
             {selectedValues.length > 0 ? (
-              <div className="z-50 flex w-full items-center justify-between">
+              <div className="flex w-full items-center justify-between">
                 <div className="flex flex-wrap items-center gap-2">
-                  {selectedValues.slice(0, maxCount).map((value) => {
+                  {selectedArray.slice(0, maxCount).map((value) => {
                     const option = options.find((o) => o.value === value);
                     const IconComponent = option?.icon;
                     return (
                       <Tag
                         key={value}
                         color={option?.color}
-                        className="hover:bg-red-500"
                         // style={{ animationDuration: `${animation}s` }}
                       >
                         {IconComponent && (
@@ -272,7 +262,7 @@ export const CategoryMultiSelect = React.forwardRef<
                         )}
                         {option?.label}
                         <IoClose
-                          className="ml-2 h-4 w-4 cursor-pointer hover:opacity-50"
+                          className="ml-2 h-4 w-4 cursor-pointer hover:text-blue-600"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
@@ -281,7 +271,7 @@ export const CategoryMultiSelect = React.forwardRef<
                       </Tag>
                     );
                   })}
-                  {selectedValues.length > maxCount && (
+                  {selectedArray.length > maxCount && (
                     <Badge
                       className={cn(
                         "border-foreground/1 bg-popover text-foreground hover:bg-transparent",
@@ -300,19 +290,18 @@ export const CategoryMultiSelect = React.forwardRef<
                     </Badge>
                   )}
                 </div>
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </div>
             ) : (
               <div className="flex w-full items-center justify-between px-1">
-                <span className="text-sm font-normal text-label">
-                  {placeholder}
-                </span>
-                {/* <ChevronDown className="h-4 cursor-pointer text-muted-foreground mx-2" /> */}
+                <span className="text-sm font-normal">{placeholder}</span>
+                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </div>
             )}
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="relative w-full p-0"
+          className="w-full p-0"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
@@ -321,19 +310,9 @@ export const CategoryMultiSelect = React.forwardRef<
               const hasMatch = value
                 .toLowerCase()
                 .includes(search.toLowerCase());
-              if (!hasMatch) {
-                setEmpty(true);
-              } else {
-                setEmpty(false);
-              }
               return hasMatch ? 1 : 0;
             }}
           >
-            {isLoading && (
-              <div className="absolute left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-neutral-900/50">
-                <Spinner size={24} />
-              </div>
-            )}
             <CommandInput
               placeholder="Search..."
               onKeyDown={handleInputKeyDown}
@@ -342,38 +321,35 @@ export const CategoryMultiSelect = React.forwardRef<
               ref={inputRef}
             />
             <CommandList>
-              <CommandEmpty>
-                <p className="pl-2 pr-4 text-xs text-neutral-400">
-                  Type and enter to create new tag +
-                </p>
-              </CommandEmpty>
+              <CommandEmpty />
               <CommandGroup>
-                <React.Suspense fallback={<TagSkeleton />}>
-                  {options.map((option) => {
-                    const isSelected = selectedValues.includes(option.value);
-                    return (
-                      <CommandItem
-                        key={option.value}
-                        value={option.label}
-                        onSelect={() => toggleOption(option.value)}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            isSelected ? "opacity-100" : "opacity-0",
-                          )}
-                        />
-                        <div className="flex w-full items-center justify-between">
-                          <Tag color={option.color}>{option?.label}</Tag>
-                          <CategoryEditDropdown
-                            category={option}
-                            startLoadingTransition={startLoadingTransition}
+                {options.length > 0 ? (
+                  <>
+                    {options.map((option) => {
+                      const isSelected = selectedValues.includes(option.value);
+                      return (
+                        <CommandItem
+                          key={option.value}
+                          value={option.label}
+                          onSelect={() => toggleOption(option.value)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              isSelected ? "opacity-100" : "opacity-0",
+                            )}
                           />
-                        </div>
-                      </CommandItem>
-                    );
-                  })}
-                </React.Suspense>
+                          {/* <p>{option.label}</p> */}
+                          <div className="flex w-full items-center justify-between">
+                            <Tag color={option.color}>{option?.label}</Tag>
+                          </div>
+                        </CommandItem>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <CommandItem disabled>No options available</CommandItem>
+                )}
               </CommandGroup>
               <CommandGroup>
                 <div className="flex flex-col items-center justify-center">
@@ -383,12 +359,12 @@ export const CategoryMultiSelect = React.forwardRef<
                         // orientation=""
                         className="block w-full"
                       />
-
-                      <div className="flex items-center justify-center py-2">
-                        <p className="pl-2 pr-4 text-xs text-neutral-400">
-                          Type and enter to create new tag +
-                        </p>
-                      </div>
+                      <CommandItem
+                        onSelect={handleClear}
+                        className="mt-1 flex w-full justify-center"
+                      >
+                        Clear
+                      </CommandItem>
                     </>
                   )}
                 </div>
@@ -410,4 +386,4 @@ export const CategoryMultiSelect = React.forwardRef<
   },
 );
 
-CategoryMultiSelect.displayName = "CategoryMultiSelect";
+CategoryFilterCombobox.displayName = "CategoryFilterCombobox";

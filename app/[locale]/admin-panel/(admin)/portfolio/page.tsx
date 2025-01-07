@@ -1,12 +1,12 @@
 import { LinkButton } from "@/components/ui/button/link-button";
-import { paginatePortfolio } from "@/data/portfolio";
 import React from "react";
 import { IoAddOutline } from "react-icons/io5";
 import PortfolioInfiniteScroll from "@/components/portfolio/portfolio-infinite-scroll";
 import FilterInput from "@/components/ui/filter/filter-input";
-import { getAllCategories } from "@/data/category";
 import { ComboboxOption } from "@/components/ui/combobox";
 import { CategoryFilterCombobox } from "@/components/ui/filter/category-filter-combobox";
+import { paginatePortfolio } from "@/data/portfolio";
+import { getCategory } from "@/data/category";
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
@@ -18,7 +18,7 @@ export default async function PortfolioPage({ searchParams }: Props) {
   const filter = await searchParams;
   const [{ data: portfolios, page }, { data: categories }] = await Promise.all([
     paginatePortfolio(filter),
-    getAllCategories(),
+    getCategory(),
   ]);
   const options: ComboboxOptionWithColor[] = categories
     ? categories.map((category) => {

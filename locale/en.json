@@ -1,5 +1,26 @@
 {
   "Dashboard": {
     "dashboard": "Dashboard"
+  },
+  "SidebarItem": {
+    "dashboard": "Dashboard",
+    "site-user": "Site User",
+    "user": "User",
+    "blog": "Blog",
+    "setting": "Setting",
+    "support": "Support",
+    "portfolio-form": "Portfolio Form",
+    "chat": "Chat",
+    "analytic": "Analytic",
+    "user-management": "User Management",
+    "admin-management": "Admin Management",
+    "admin": "Admin",
+    "role": "Role",
+    "permission": "Permission",
+    "content-management": "Content Managemnet",
+    "communication": "Communication",
+    "configuration": "Configuration",
+    "portfolio": "Portfolio",
+    "content": "Content"
   }
 }

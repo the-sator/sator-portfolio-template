@@ -6,95 +6,74 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "./sidebar";
 import { MdArticle, MdDashboard, MdDesignServices } from "react-icons/md";
 // import ThemeSwitch from "../theme-switch";
 import { IoIosHelpCircle, IoIosSettings } from "react-icons/io";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import SidebarMenuNavItem from "./sidebar-menu-nav-item";
+import { useTranslations } from "next-intl";
 const items = [
   {
-    title: "Analytic",
+    title: "analytic",
     url: "#",
     children: [
       {
-        title: "Dashboard",
-        url: "/admin/dashboard",
-        icon: MdDashboard,
-      },
-    ],
-    // icon: MdDashboard,
-  },
-
-  {
-    title: "Creation",
-    url: "#",
-    children: [
-      {
-        title: "Portfolio",
-        url: "/admin/portfolio",
-        icon: MdDesignServices,
-      },
-
-      {
-        title: "Blog",
-        url: "/admin/blog",
-        icon: MdArticle,
+        title: "dashboard",
+        url: "/admin-panel/dashboard",
+        icon: <MdDashboard />,
       },
     ],
   },
 
   {
-    title: "Configuration",
+    title: "content",
     url: "#",
     children: [
       {
-        title: "Setting",
+        title: "portfolio",
+        url: "/admin-panel/portfolio",
+        icon: <MdDesignServices />,
+      },
+
+      {
+        title: "blog",
+        url: "/admin-panel/blog",
+        icon: <MdArticle />,
+      },
+    ],
+  },
+
+  {
+    title: "configuration",
+    url: "#",
+    children: [
+      {
+        title: "setting",
         url: "#",
-        icon: IoIosSettings,
+        icon: <IoIosSettings />,
       },
       {
-        title: "Support",
+        title: "support",
         url: "#",
-        icon: IoIosHelpCircle,
+        icon: <IoIosHelpCircle />,
       },
     ],
   },
 ];
 
 export default function SidebarItem() {
-  const pathname = usePathname();
+  const t = useTranslations("SidebarItem");
   // const path = pathname.split("/")[2];
-  const isActivePath = (currentPath: string, childUrl: string) => {
-    if (childUrl === "/") {
-      return ["/", "/en", "/kh"].includes(currentPath);
-    }
-    return currentPath.replace(/^\/(en|kh)/, "") === childUrl;
-  };
-
   return (
     <SidebarContent>
       {items.map((item) => (
         <SidebarGroup key={item.title}>
-          <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t(item.title)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {item.children.map((child) => (
-                <SidebarMenuItem key={child.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActivePath(pathname, child.url)}
-                    // isActive={path === child.url}
-                  >
-                    <Link href={`${child.url}`} className="text-label">
-                      <child.icon />
-                      <span>{child.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {item.children.map((item) => {
+                return <SidebarMenuNavItem item={item} key={item.title} />;
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
