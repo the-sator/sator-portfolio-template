@@ -23,6 +23,8 @@ import { SiteUser } from "@/types/site-user.type";
 import CoverImageUpload from "../cover-image-upload";
 import { uploadImage } from "@/data/upload";
 import { DynamicEditor, EditorRef } from "@/components/editor/editor";
+import { useQueryClient } from "@tanstack/react-query";
+import { getPortfolioQueryKey } from "@/data/query/portfolio";
 
 type Props = {
   user: SiteUser;
@@ -65,6 +67,7 @@ export default function PortfolioForm({ user, categories, portfolio }: Props) {
     useState<string[]>(categoryIds);
   const [isUploadPending, startUploadTransition] = useTransition();
   const [isSubmitPending, startSubmitTransition] = useTransition();
+  const queryClient = useQueryClient();
 
   //Constant
   const categoryOption = categories?.map((category) => {
@@ -92,7 +95,7 @@ export default function PortfolioForm({ user, categories, portfolio }: Props) {
       site_user_id: user.id,
       slug: slug,
       categories: selectedCategories,
-      cover_url: coverPreviewUrl || null,
+      cover_url: coverPreviewUrl ?? "",
       gallery: imagePreviews.map((image) => {
         return image.url;
       }),
@@ -119,6 +122,7 @@ export default function PortfolioForm({ user, categories, portfolio }: Props) {
         variant: "success",
         duration: 1500,
       });
+      queryClient.invalidateQueries({ queryKey: [getPortfolioQueryKey()] });
     }
   };
 
@@ -197,8 +201,6 @@ export default function PortfolioForm({ user, categories, portfolio }: Props) {
           }}
           user={user}
           defaultValue={selectedCategories}
-
-          // onTagUpdate={handleGetTags}
         />
         <div className="flex flex-col gap-4">
           <Label>Content</Label>

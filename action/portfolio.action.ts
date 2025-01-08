@@ -4,6 +4,8 @@ import {
   createPortfolio,
   deletePortfolio,
   paginatePortfolio,
+  publishPortfolio,
+  unpublishPortfolio,
   updatePortfolio,
 } from "@/data/portfolio";
 import {
@@ -86,31 +88,29 @@ export const deletePortfolioAction = async (id: string) => {
       error: error,
     };
   }
-  revalidateTag("portfolios");
+  return { data, error };
+};
+
+export const publishPortfolioAction = async (id: string) => {
+  const { data, error } = await publishPortfolio(id);
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
   revalidateTag("portfolio");
   return { data, error };
 };
 
-// export const publishPortfolioAction = async (id: string) => {
-//   const { data, error } = await publishPortfolio(id);
-//   if (error) {
-//     return {
-//       data: null,
-//       error: error,
-//     };
-//   }
-//   revalidateTag("portfolio");
-//   return { data, error };
-// };
-
-// export const unpublishPortfolioAction = async (id: string) => {
-//   const { data, error } = await unpublishPortfolio(id);
-//   if (error) {
-//     return {
-//       data: null,
-//       error: error,
-//     };
-//   }
-//   revalidateTag("portfolio");
-//   return { data, error };
-// };
+export const unpublishPortfolioAction = async (id: string) => {
+  const { data, error } = await unpublishPortfolio(id);
+  if (error) {
+    return {
+      data: null,
+      error: error,
+    };
+  }
+  revalidateTag("portfolio");
+  return { data, error };
+};

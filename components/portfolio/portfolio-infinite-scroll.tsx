@@ -1,25 +1,25 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PortfolioCard from "./portfolio-card";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Portfolio, PortfolioFilter } from "@/types/portfolio.type";
 import Spinner from "../ui/spinner";
 import { useGetInfinitePortfolios } from "@/data/query/portfolio";
 import { toast } from "@/hooks/use-toast";
 import CustomCreateButton from "../ui/button/custom-create-button";
+import { Portfolio, PortfolioFilter } from "@/types/portfolio.type";
 type Props = {
-  portfolios: Portfolio[];
-  page: number | null | undefined;
   filter: PortfolioFilter;
 };
-export default function PortfolioInfiniteScroll({
-  portfolios,
-  filter,
-  page,
-}: Props) {
-  const { data, fetchNextPage, hasNextPage, error, isError } =
-    useGetInfinitePortfolios(portfolios, page, filter, {});
-  const portfolioItems = data.pages.flatMap((page) => page.data) || [];
+export default function PortfolioInfiniteScroll({ filter }: Props) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    error,
+    isError,
+  } = useGetInfinitePortfolios(filter, {});
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
 
   useEffect(() => {
     if (isError) {
@@ -29,15 +29,20 @@ export default function PortfolioInfiniteScroll({
         variant: "destructive",
       });
     }
-  }, [isError]);
+
+    if (data) {
+      const allPortfolios = data?.pages.flatMap((page) => page.data || []);
+      setPortfolios(allPortfolios);
+    }
+  }, [data, isError]);
 
   return (
     <>
-      {portfolioItems.length > 0 ? (
+      {portfolios.length > 0 ? (
         <InfiniteScroll
-          dataLength={portfolioItems.length}
+          dataLength={portfolios.length}
           next={fetchNextPage}
-          hasMore={hasNextPage}
+          hasMore={hasNextPage || isFetchingNextPage}
           scrollThreshold={0.5}
           loader={
             <div className="grid w-full grid-cols-1 place-items-center py-2.5">
@@ -48,7 +53,7 @@ export default function PortfolioInfiniteScroll({
         >
           {/* <div className="flex flex-wrap gap-4"> */}
           <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {portfolioItems.map((portfolio) => (
+            {portfolios.map((portfolio) => (
               <PortfolioCard key={portfolio?.id} portfolio={portfolio!} />
             ))}
           </div>

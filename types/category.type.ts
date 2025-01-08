@@ -16,16 +16,11 @@ export type CategoryOnPorfolio = {
   category: Category;
 };
 
-export const CreateCategorySchema = z
-  .object({
-    name: z.string().min(1, { message: "Name is required" }),
-    color: z.nativeEnum(Color).optional(),
-    admin_id: z.string().optional(),
-    site_user_id: z.string().optional(),
-  })
-  .refine((data) => data.admin_id || data.site_user_id, {
-    message: "Either admin_id or site_user_id is required",
-    path: ["admin_id"],
-  });
+export const CreateCategorySchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  color: z.nativeEnum(Color).optional(),
+  admin_id: z.string().optional(),
+  site_user_id: z.string().optional(),
+});
 
 export type CreateCategory = z.infer<typeof CreateCategorySchema>;

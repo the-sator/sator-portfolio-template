@@ -1,8 +1,9 @@
 import PortfolioForm from "@/components/ui/form/portfolio-form";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getAdminSession } from "@/data/admin";
-import { getAllCategories } from "@/data/category";
+import { ADMIN_LOGIN_PATH } from "@/constant/base";
+import { getCategory } from "@/data/category";
 import { getPortfolioBySlug } from "@/data/portfolio";
+import { getSiteUserSession } from "@/data/site-user";
 import { notFound, redirect } from "next/navigation";
 import React, { Suspense } from "react";
 type Props = {
@@ -10,14 +11,14 @@ type Props = {
 };
 export default async function page({ params }: Props) {
   const slug = (await params).slug;
-  const [{ auth }, { data: categories }, { data: portfolio }] =
+  const [{ user }, { data: categories }, { data: portfolio }] =
     await Promise.all([
-      getAdminSession(),
-      getAllCategories(),
+      getSiteUserSession(),
+      getCategory(),
       getPortfolioBySlug(slug),
     ]);
-  if (!auth) {
-    return redirect("/admin-panel/login");
+  if (!user) {
+    return redirect(ADMIN_LOGIN_PATH);
   }
 
   if (!portfolio) {
@@ -28,7 +29,7 @@ export default async function page({ params }: Props) {
     <div className="p-4">
       <Suspense fallback={<Skeleton className="min-h-svh w-full" />}>
         <PortfolioForm
-          admin={auth}
+          user={user}
           categories={categories || []}
           portfolio={portfolio}
         />

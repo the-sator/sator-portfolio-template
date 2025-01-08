@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -31,15 +31,15 @@ type Props = {
     }>;
   };
   startLoadingTransition: React.TransitionStartFunction;
+  setIsPopoverOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function CategoryEditDropdown({
   category,
-  // onCategoryUpdate,
   startLoadingTransition,
+  setIsPopoverOpen,
 }: Props) {
   const [open, setOpen] = useState(false); // Track dropdown open state
-  // const router = useRouter();
 
   const { register, setValue, watch, handleSubmit } = useForm({
     defaultValues: {
@@ -65,18 +65,18 @@ export default function CategoryEditDropdown({
   const handleUpdateCategory = useCallback(
     async (data: CreateCategory) => {
       const isDataChanged = (data: CreateCategory) => {
-        return data.name !== category.label || data.color !== category.color;
+        return (
+          data.name !== category.label ||
+          data.color !== category.color?.toUpperCase()
+        );
       };
       if (!isDataChanged(data)) {
         console.log("No changes, skipping update.");
         return;
       }
-      console.log("Data: ", data);
-      // return;
       startLoadingTransition(async () => {
         try {
           const response = await updateCategoryAction(category.value, data);
-          console.log("response:", response);
           if (response.error) {
             if ("statusCode" in response.error) {
               toast({
@@ -146,9 +146,9 @@ export default function CategoryEditDropdown({
       open={open} // Control open state
       onOpenChange={(isOpen) => {
         if (!isOpen) {
+          setIsPopoverOpen(true);
           handleSubmit(handleUpdateCategory)(); // Trigger form submission when the dropdown closes
         }
-        console.log("Changing");
         setOpen(isOpen); // Update state
       }}
     >
@@ -156,6 +156,9 @@ export default function CategoryEditDropdown({
         <Button
           variant={"icon"}
           size={"icon"}
+          onClick={() => {
+            setOpen(false);
+          }}
           className="h-full w-fit rounded-full p-1 hover:bg-neutral-700/50 focus-visible:ring-offset-0"
         >
           <SlOptionsVertical className="text-neutral-400" />

@@ -5,7 +5,6 @@ import PortfolioInfiniteScroll from "@/components/portfolio/portfolio-infinite-s
 import FilterInput from "@/components/ui/filter/filter-input";
 import { ComboboxOption } from "@/components/ui/combobox";
 import { CategoryFilterCombobox } from "@/components/ui/filter/category-filter-combobox";
-import { paginatePortfolio } from "@/data/portfolio";
 import { getCategory } from "@/data/category";
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -16,10 +15,7 @@ type ComboboxOptionWithColor = ComboboxOption & {
 };
 export default async function PortfolioPage({ searchParams }: Props) {
   const filter = await searchParams;
-  const [{ data: portfolios, page }, { data: categories }] = await Promise.all([
-    paginatePortfolio(filter),
-    getCategory(),
-  ]);
+  const [{ data: categories }] = await Promise.all([getCategory()]);
   const options: ComboboxOptionWithColor[] = categories
     ? categories.map((category) => {
         return {
@@ -54,11 +50,7 @@ export default async function PortfolioPage({ searchParams }: Props) {
           className="w-full"
         />
       </div>
-      <PortfolioInfiniteScroll
-        portfolios={portfolios!}
-        page={page}
-        filter={filter}
-      />
+      <PortfolioInfiniteScroll filter={filter} />
     </div>
   );
 }

@@ -132,7 +132,6 @@ export const CategoryMultiSelect = React.forwardRef<
       animation = 0,
       maxCount = 3,
       modalPopover = false,
-      asChild = true,
       className,
       user,
       ...props
@@ -236,16 +235,21 @@ export const CategoryMultiSelect = React.forwardRef<
       setInputValue(search);
     };
 
+    React.useEffect(() => {
+      console.log("isPopoverOpen", isPopoverOpen);
+    }, [isPopoverOpen]);
+
     return (
       <Popover
         open={isPopoverOpen}
         onOpenChange={setIsPopoverOpen}
         modal={modalPopover}
       >
-        <PopoverTrigger asChild={asChild}>
+        <PopoverTrigger asChild>
           <Button
             ref={ref}
             {...props}
+            type="button"
             variant={"outline"}
             onClick={handleTogglePopover}
             className={cn(
@@ -368,6 +372,7 @@ export const CategoryMultiSelect = React.forwardRef<
                           <CategoryEditDropdown
                             category={option}
                             startLoadingTransition={startLoadingTransition}
+                            setIsPopoverOpen={setIsPopoverOpen}
                           />
                         </div>
                       </CommandItem>
